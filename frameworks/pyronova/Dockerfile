@@ -14,7 +14,7 @@ RUN pip install --no-cache-dir maturin
 # rebuilds from that tag. The full source ships at github, not in this
 # PR, so the PR stays small and the build is byte-for-byte reproducible
 # against a signed git ref.
-ARG PYRONOVA_REF=v2.1.0
+ARG PYRONOVA_REF=v2.1.1
 RUN git clone --depth 1 --branch ${PYRONOVA_REF} \
         https://github.com/moomoo-tech/pyronova.git /build/pyronova
 RUN cd /build/pyronova \
@@ -30,13 +30,5 @@ RUN pip install --no-cache-dir /tmp/wheels/*.whl && rm -rf /tmp/wheels
 
 COPY app.py launcher.py ./
 
-# Arena harness expectations:
-#   - 8080 plaintext HTTP/1.1
-#   - 8081 HTTPS HTTP/1.1 (json-tls profile)
-#   - 8443 HTTPS HTTP/2 (baseline-h2, static-h2)
-#   - /certs/server.{crt,key}  mounted by harness
-#   - /data/dataset.json       mounted by harness
-#   - /data/static             mounted by harness
-#   - $DATABASE_URL            set by harness when PG profile active
 EXPOSE 8080 8081 8443
 CMD ["python3", "launcher.py"]
